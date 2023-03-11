@@ -1,0 +1,39 @@
+/** create a store database**/
+
+CREATE TABLE my_store (id INTEGER PRIMARY KEY, product TEXT, quantity INTEGER, type TEXT, price INTEGER);
+
+INSERT INTO my_store VALUES (1, "juice", 25, "fresh", 2.39);
+INSERT INTO my_store VALUES (2, "flour", 13, "grains", 5.99);
+INSERT INTO my_store VAlUES (3, "ice cream", 10, "desert", 3.99);
+INSERT INTO my_store VALUES (4, "cake", 7, "desert", 7.99);
+INSERT INTO my_store VALUES (5, "tomato sauce", 18, "condiment", 3.99);
+INSERT INTO my_store VALUES (6, "mayonnaise", 11, "condiment", 3.98);
+INSERT INTO my_store VALUES (7, "mustard", 19, "condiment", 3.98);
+INSERT INTO my_store VALUES (8, "ramen", 38, "grains", 1.99);
+INSERT INTO my_store VALUES (9, "eggs", 50, "dairy", 5.99);
+INSERT INTO my_store VALUES (10, "bread", 12, "grains", 2.99);
+INSERT INTO my_store VALUES (11, "cheese", 30, "dairy", 4.99);
+INSERT INTO my_store VALUES (12, "lays", 23, "snacks", 1.99);
+INSERT INTO my_store VALUES (13, "coke", 34, "drinks", 1.99);
+INSERT INTO my_store VALUES (14, "pasta", 9, "grains", 2.99);
+INSERT INTO my_store VALUES (15, "milk", 12, "dairy", 3.99);
+
+/** database ordered by price**/  
+SELECT * FROM my_store 
+    ORDER BY price;
+
+/** database where quantity less than 15**/
+SELECT * FROM my_store 
+    WHERE quantity < 15 
+    ORDER BY price
+    limit 5;
+
+/** show the max product we have**/
+SELECT product, price, MAX(quantity) 
+    FROM my_store;
+
+/** show avg price for dairy type**/
+SELECT avg(price) Dairy_avg_price
+    FROM my_store
+    where type ='dairy'
+ 
