@@ -1,0 +1,61 @@
+-- For this project, I downloaded Spotify data from Kaggle.
+-- Then I created a table to insert Spotify data into.
+-- Finally, I performed analytics on the data using SQL. 
+
+-- Creating the table: 
+
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+--Then I inserted the Spotify Data .csv into the table.
+
+--Next, I came up with some questions to explore the data using the following SQL. 
+
+
+--1. Determine the five artists have the most popular and danceable tracks?
+SELECT artist_name, track_name
+FROM bit_db.Spotifydata
+ORDER BY popularity desc, danceability desc
+
+--2. Identify the track and the artist who released the longest song. And how long it is in min.
+    -- Since duration was in ms I had to convert into minutes.
+SELECT artist_name, track_name, (duration_ms/1000)/60 as dura_sec
+FROM bit_db.Spotifydata
+ORDER BY dura_sec desc
+LIMIT 1
+ 
+--3. I calculated what the popularity of the song with the most acousticness was.
+SELECT track_name, popularity, acousticness
+FROM bit_db.Spotifydata
+WHERE acousticness IN
+(SELECT max(acousticness) 
+FROM bit_db.Spotifydata)
+ORDER BY popularity desc
+
+
+--4. I also determined who the Top 10 artists and their tracks are by popularity and shorter duration.
+    --Again I had to convert the duration from ms to min to make it easier to understand.
+SELECT artist_name, track_name, popularity, (duration_ms/1000)/60 as dura_min
+FROM bit_db.Spotifydata
+ORDER BY popularity desc, dura_min asc
+limit 10
+
+
