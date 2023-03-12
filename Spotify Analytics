@@ -36,7 +36,7 @@ FROM bit_db.Spotifydata
 ORDER BY popularity desc, danceability desc
 
 --2. Identify the track and the artist who released the longest song. And how long it is in min.
-    -- Since duration was in ms I had to convert into minutes.
+-- Since duration was in ms I had to convert into minutes.
 SELECT artist_name, track_name, (duration_ms/1000)/60 as dura_sec
 FROM bit_db.Spotifydata
 ORDER BY dura_sec desc
@@ -52,7 +52,7 @@ ORDER BY popularity desc
 
 
 --4. I also determined who the Top 10 artists and their tracks are by popularity and shorter duration.
-    --Again I had to convert the duration from ms to min to make it easier to understand.
+--Again I had to convert the duration from ms to min to make it easier to understand.
 SELECT artist_name, track_name, popularity, (duration_ms/1000)/60 as dura_min
 FROM bit_db.Spotifydata
 ORDER BY popularity desc, dura_min asc
