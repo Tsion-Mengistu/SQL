@@ -143,7 +143,7 @@ SELECT sum(price) as 'total_revenue', country
 FROM bit_db.sales
 GROUP BY country
 ORDER BY total_revenue desc
-LIMIT 3
+LIMIT 3;
 
 --4. Which are the top 5 state in the US has the lowest sale?
 
@@ -152,7 +152,15 @@ FROM bit_db.sales
 WHERE country = 'United states'
 GROUP BY state
 ORDER BY total asc
-LIMIT 5
+LIMIT 5;
+
+--5. What's the highest selling product and how much have we sold so far?
+
+SELECT product, sum(price) as 'price'
+FROM bit_db.sales
+GROUP BY product
+ORDER BY price desc
+LIMIT 1;
 
 
 
