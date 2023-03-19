@@ -1,0 +1,47 @@
+-- In this project, I imported a dataset from Kaggle and added it to an existing database named Chinook. Using SQL statements, I retrieved and analyzed data from the "Market Sales" table in the Chinook database to gain insights into various metrics related to sales, profitability, marketing effectiveness, inventory management, time series analysis, and product performance. The queries grouped the data by different dimensions, calculated various metrics, and sorted the results based on specific criteria such as descending or ascending order.
+
+
+
+--1. Sales Metrics -This metric provides insights into the sales performance of products in different markets and states. The SQL query groups the data by state, market, and product type and calculates the total sales, total sales quantity, and average order value for each group. The results are sorted in descending order based on total sales.
+
+SELECT state, market, producttype, SUM(sales) AS Total_sales, COUNT(ProductId) AS Total_sales_quantity, Round(AVG(sales)) AS Avg_Order_Value
+FROM chinook."Market Sales"
+GROUP BY state, market, producttype
+ORDER BY total_sales desc;
+
+--2. Profit and Margin Metrics: This metric measures the profitability of products in different markets and states. The SQL query groups the data by state, market, and product type and calculates the total profit, total margin, total budget profit, and total budget margin for each group. The results are sorted in descending order based on total profit.
+
+SELECT State, Market, ProductType, SUM(Profit) AS TotalProfit, SUM(Margin) AS TotalMargin, SUM(Budget_Profit) AS TotalBudget_Profit, SUM(Budget_Margin) AS TotalBudgetMargin
+FROM chinook."Market Sales"
+GROUP BY State, Market, ProductType
+ORDER BY TotalProfit DESC;
+
+--3. Marketing Metrics: This metric provides insights into the effectiveness of marketing efforts in different markets and states. The SQL query groups the data by state and market and calculates the total expenses, total marketing expenses, total sales, and marketing ROI for each group. The results are sorted in descending order based on total sales.
+
+SELECT State, Market, SUM(Total_Expense) AS TotalExpenses, SUM(Marketing) AS TotalMarketingExpenses, SUM(Sales) AS TotalSales, SUM(Sales)-SUM(Marketing)/SUM(marketing) AS MarketingROI
+FROM chinook."Market Sales"
+GROUP BY State, Market
+ORDER BY TotalSales DESC;
+
+--4. Inventory Metrics: This metric measures the inventory management performance of products in different markets. The SQL query groups the data by market and product type and calculates the average inventory, and total in-stock products for each group. The results are sorted in descending order based on average inventory.
+
+SELECT Market, ProductType, AVG(Inventory) AS AvgInventory, SUM(CASE WHEN Inventory > 0 THEN 1 ELSE 0 END) AS TotalInStock
+FROM chinook."Market Sales"
+GROUP BY Market, ProductType
+ORDER BY AvgInventory DESC;
+
+--5.Time Series Analysis: This metric provides insights into the sales performance of products over time. The SQL query groups the data by product type and date and calculates the total sales for each group. The results are sorted in ascending order based on date.
+
+SELECT ProductType, Date, SUM(Sales) AS TotalSales
+FROM chinook."Market Sales"
+GROUP BY ProductType, Date
+ORDER BY Date ASC;
+
+--6. Product Performance: This metric provides insights into the sales and profitability performance of products in different markets. The SQL query groups the data by market and product type and calculates the total sales, total profit, and average inventory for each group. The results are sorted in descending order based on total sales.
+
+SELECT Market, ProductType, SUM(Sales) AS TotalSales, SUM(Profit) AS TotalProfit, AVG(Inventory) AS AvgInventory
+FROM chinook."Market Sales"
+GROUP BY Market, ProductType
+ORDER BY TotalSales DESC;
+
+
