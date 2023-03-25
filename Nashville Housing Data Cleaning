@@ -3,6 +3,7 @@
 
 SELECT * FROM chinook."Nashville_Housing";
 
+
 --Populate Property Address Data
 
 
