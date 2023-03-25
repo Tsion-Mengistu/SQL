@@ -1,0 +1,124 @@
+-- In this project I provided a series of SQL queries to perform various tasks on the "Nashville_Housing" table in the "chinook" database to clean the data and make it more useful for use.
+
+
+SELECT * FROM chinook."Nashville_Housing";
+
+--Populate Property Address Data
+
+
+--updated the propertyaddress column of the Nashville_Housing table to NULL for all rows where propertyaddress is an empty string
+
+UPDATE chinook."Nashville_Housing" 
+SET propertyaddress = NULL 
+WHERE propertyaddress = '';
+
+SELECT * 
+FROM chinook."Nashville_Housing"
+WHERE Propertyaddress isnull
+ORDER BY parcelID;
+
+-- Join the Nashville_Housing table to itself using the Parcelid column, and selects pairs of rows where one row has a NULL value in the propertyaddress column and the other row has a non-NULL value for the same Parcelid. For each pair of rows, the query uses the IFNULL function to return the non-NULL value if there is one, or the NULL value if both values are NULL. The result includes one row for each pair of matching rows.
+
+SELECT a.parcelid, a.propertyaddress, b.parcelid, b.propertyaddress, IFNULL(a.propertyaddress, b.PropertyAddress)
+FROM chinook."Nashville_Housing" a
+JOIN chinook."Nashville_Housing" b
+    ON a.Parcelid = b.parcelid
+    AND a. uniqueid <> b. uniqueid
+WHERE a.propertyaddress is null;
+
+--updated the null cells to have address based on the above info
+
+UPDATE chinook."Nashville_Housing" 
+SET propertyaddress = (
+    SELECT IFNULL(a.propertyaddress, b.PropertyAddress)
+    FROM chinook."Nashville_Housing" a
+    JOIN chinook."Nashville_Housing" b 
+        ON a.Parcelid = b.parcelid
+        AND a.[uniqueid] <> b.[uniqueid]
+    WHERE a.propertyaddress is null
+    AND a.Parcelid = chinook."Nashville_Housing".Parcelid
+)
+WHERE propertyaddress is null;
+
+    
+--selects data from the "PropertyAddress" column of the "Nashville_Housing" table in the "chinook" database. It uses the SUBSTRING function to extract the portion of the string before the comma as the "Address" column and the portion after the comma as the "City" column. The INSTR function is used to find the position of the comma in the string. The resulting output will show the Address and City columns for each row in the table.
+
+SELECT 
+    SUBSTRING(PropertyAddress, 1, INSTR(PropertyAddress, ',') - 1) as Address,
+    SUBSTRING(PropertyAddress, INSTR(PropertyAddress, ',') + 1) as City
+FROM chinook."Nashville_Housing";
+
+--Create a new column for the above info
+
+ALTER TABLE Nashville_Housing
+ADD PropertyAddressSplit Nvarchar(255);
+
+ALTER TABLE Nashville_Housing
+ADD PropertyCitySplit Nvarchar(255);
+    
+UPDATE Nashville_Housing
+SET PropertyAddressSplit = SUBSTRING(PropertyAddress, 1, INSTR(PropertyAddress, ',') - 1);
+    
+UPDATE Nashville_Housing
+SET PropertyCitySplit = SUBSTRING(PropertyAddress, INSTR(PropertyAddress, ',') + 1);
+
+--Separating owner address
+
+SELECT owneraddress
+FROM chinook."Nashville_Housing";
+
+
+-- This code extracts the address, city, and state from the OwnerAddress column using the SUBSTRING and INSTR functions. The City expression uses the SUBSTRING function to extract the substring after the first comma, up to but not including the second comma. The State expression uses the SUBSTRING function to extract the substring after the second comma plus two characters, which is the beginning of the state abbreviation.
+
+SELECT
+    SUBSTRING(OwnerAddress, 1, INSTR(OwnerAddress, ',') - 1) as Address,
+    SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 1, INSTR(SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2), ',') - 1) as City,
+    SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2 + INSTR(SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2), ',') + 1) as State
+FROM chinook."Nashville_Housing";
+    
+--Let's create a new column for the above
+
+ALTER TABLE Nashville_Housing
+ADD OwnerAddressSplit Nvarchar(255);
+
+ALTER TABLE Nashville_Housing
+ADD OwnerCitySplit Nvarchar(255);
+
+ALTER TABLE Nashville_Housing
+ADD OwnerStateSplit Nvarchar(255);
+    
+UPDATE Nashville_Housing
+SET OwnerAddressSplit = SUBSTRING(OwnerAddress, 1, INSTR(OwnerAddress, ',') - 1) ;
+
+UPDATE Nashville_Housing
+SET OwnerCitySplit = SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 1, INSTR(SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2), ',') - 1);
+
+UPDATE Nashville_Housing
+SET OwnerStateSplit = SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2 + INSTR(SUBSTRING(OwnerAddress, INSTR(OwnerAddress, ',') + 2), ',') + 1);
+
+
+--Change Y and N to Yes and NO in sold as vacant field
+
+SELECT Distinct SoldAsVacant, count(SoldAsVacant)
+FROM chinook."Nashville_Housing"
+Group by SoldAsVacant;
+
+--selects the SoldAsVacant column from the Nashville_Housing table and applies a CASE statement to it. The CASE statement checks the value of SoldAsVacant for each row and replaces it with 'Yes' if it is 'Y', 'No' if it is 'N', or leaves it unchanged if it is anything else. The resulting output includes the original SoldAsVacant value and the corresponding 'Yes' or 'No' value based on the CASE statement.
+
+SELECT SoldAsVacant,
+    CASE 
+        WHEN SoldAsVacant = 'Y' THEN 'Yes'
+        WHEN SoldAsVacant = 'N' THEN 'No'
+        ELSE SoldAsVacant
+        END
+FROM chinook."Nashville_Housing";
+
+
+-- Updated based on the above info
+
+UPDATE Nashville_Housing
+SET SoldAsVacant = CASE 
+        WHEN SoldAsVacant = 'Y' THEN 'Yes'
+        WHEN SoldAsVacant = 'N' THEN 'No'
+        ELSE SoldAsVacant
+        END;
